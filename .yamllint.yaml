@@ -1,0 +1,10 @@
+# https://yamllint.readthedocs.io/en/stable/rules.html
+rules:
+  key-duplicates: enable
+  braces: enable
+  document-start: disable
+  document-end: disable
+  indentation:
+    spaces: 2
+    indent-sequences: whatever
+  line-length: disable # enable
