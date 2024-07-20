@@ -1,0 +1,37 @@
+name: Format and Linter Checks
+on:
+  - workflow_dispatch
+  - push
+  - pull_request
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  Checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Linter
+        if: always()
+        uses: chartboost/ruff-action@v1
+        with:
+          args: "check --no-cache"
+
+      - name: Format
+        if: always()
+        uses: chartboost/ruff-action@v1
+        with:
+          args: "format --check"
+
+      - name: Validate any YAML file
+        if: always()
+        run: yamllint ./ --config-file .yamllint.yaml
+
+      - name: Python sort imports
+        if: always()
+        uses: isort/isort-action@v1
+        with:
+          configuration: --profile black --check-only --diff
