@@ -6,32 +6,45 @@ on:
 permissions:
   id-token: write
   contents: read
-
 jobs:
-  Checks:
-    runs-on: ubuntu-latest
+  checks:
+    runs-on:
+      - ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Git clone the repository
         uses: actions/checkout@v4
 
-      - name: Linter
+      - name: Python linting # ref: https://github.com/astral-sh/ruff
         if: always()
-        uses: chartboost/ruff-action@v1
+        uses: astral-sh/ruff-action@v3
         with:
-          args: "check --no-cache"
+          version: 0.7.1
+          args: check --no-cache --exclude "*.ipynb"
+          src: ./src/api
 
-      - name: Format
+      - name: Python formatting
         if: always()
-        uses: chartboost/ruff-action@v1
+        uses: astral-sh/ruff-action@v3
         with:
-          args: "format --check"
+          version: 0.7.1
+          args: format --check --exclude "*.ipynb"
+          src: ./src/api
 
-      - name: Validate any YAML file
+      - name: Validate YAML file
         if: always()
-        run: yamllint ./ --config-file .yamllint.yaml
+        run: yamllint ./src/api --config-file .yamllint.yaml
 
-      - name: Python sort imports
+      - name: Python import sorts
         if: always()
-        uses: isort/isort-action@v1
+        uses: isort/isort-action@v1.1.1
         with:
+          isort-version: 5.13.2
           configuration: --profile black --check-only --diff
+          sort-paths: ./src/api
+
+      - name: Docker linter # ref: https://github.com/marketplace/actions/hadolint-action
+        if: always()
+        uses: hadolint/hadolint-action@master
+        with:
+          dockerfile: |
+            src/api/Dockerfile

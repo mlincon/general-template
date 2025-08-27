@@ -1,9 +1,14 @@
+ignore:
+  - **/node_modules/**
+
 # https://yamllint.readthedocs.io/en/stable/rules.html
 rules:
   key-duplicates: enable
   braces: enable
   document-start: disable
   document-end: disable
+  # brackets:
+  #   forbid: true
   indentation:
     spaces: 2
     indent-sequences: whatever

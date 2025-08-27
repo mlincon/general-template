@@ -1,48 +1,52 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
-# default_language_version:
-#   python: python3.11
-
+# Conventional Commits
 repos:
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.1.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [--strict, feat, fix, chore, docs, ci, test, custom]
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
       - id: check-added-large-files
-        args: ["--maxkb=700"]
+        args: ["--maxkb=1024"]
       - id: check-toml
       - id: check-yaml
         args:
           - --unsafe
       - id: end-of-file-fixer
+        exclude: \.drawio$
       - id: trailing-whitespace
       - id: requirements-txt-fixer
 
   # sort python imports
-  # https://pycqa.github.io/isort/docs/configuration/black_compatibility.html
+  # uses compatibility with black and eventually ruff: https://pycqa.github.io/isort/docs/configuration/black_compatibility.html
   - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
       - id: isort
         args: ["--profile", "black", "--filter-files"]
 
   # lint and format using ruff
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.1.6
+    rev: v0.7.1
     hooks:
       - id: ruff # Run the linter
         args: [--fix]
       - id: ruff-format # Run the formatter
 
-  # https://docs.sqlfluff.com/en/stable/production.html
+  # sql linter and formater using sqlfluff: https://docs.sqlfluff.com/en/stable/production.html
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 2.3.5
+    rev: 3.2.5
     hooks:
       - id: sqlfluff-lint
       - id: sqlfluff-fix
 
   # yaml checks (see yamllint config for settings that will be checked)
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.33.0
+    rev: v1.35.1
     hooks:
       - id: yamllint
 
@@ -63,6 +67,12 @@ repos:
       # - id: go-imports
       # - id: no-go-testing
       # - id: go-unit-tests
+
+  # secret scanning
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.16.1
+    hooks:
+      - id: gitleaks
 
 ci:
   autofix_commit_msg: 🎨 [pre-commit.ci] Auto format from pre-commit.com hooks
